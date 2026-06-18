@@ -54,8 +54,8 @@ jobs:
         push: true
         tags: ghcr.io/${{ steps.owner.outputs.value }}/web1:${{ steps.tag.outputs.value }}
         annotations: |
-          index,manifest:org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-          index,manifest:org.opencontainers.image.revision=${{ github.sha }}
+          manifest:org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          manifest:org.opencontainers.image.revision=${{ github.sha }}
 
     - name: Build and push web2
       uses: docker/build-push-action@v5
@@ -64,8 +64,8 @@ jobs:
         push: true
         tags: ghcr.io/${{ steps.owner.outputs.value }}/web2:${{ steps.tag.outputs.value }}
         annotations: |
-          index,manifest:org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-          index,manifest:org.opencontainers.image.revision=${{ github.sha }}
+          manifest:org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          manifest:org.opencontainers.image.revision=${{ github.sha }}
 
     - name: Summary
       run: |
