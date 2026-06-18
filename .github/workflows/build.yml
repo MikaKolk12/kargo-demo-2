@@ -16,6 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Set lowercase owner
       id: owner
       run: echo "value=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
@@ -40,15 +43,6 @@ jobs:
           echo "value=sha-${SHORT_SHA}" >> $GITHUB_OUTPUT
         fi
 
-    - name: Docker meta
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ghcr.io/${{ steps.owner.outputs.value }}/web1
-        tags: type=raw,value=${{ steps.tag.outputs.value }}
-      env:
-        DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
-
     - name: Log in to ghcr.io
       uses: docker/login-action@v3
       with:
@@ -57,20 +51,24 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and push web1
-      uses: docker/build-push-action@v6
-      with:
-        context: web1
-        push: true
-        tags: ghcr.io/${{ steps.owner.outputs.value }}/web1:${{ steps.tag.outputs.value }}
-        annotations: ${{ steps.meta.outputs.annotations }}
+      run: |
+        docker buildx build \
+          --push \
+          --platform linux/amd64,linux/arm64 \
+          --tag "ghcr.io/${{ steps.owner.outputs.value }}/web1:${{ steps.tag.outputs.value }}" \
+          --annotation "index,manifest:org.opencontainers.image.source=https://github.com/${{ github.repository }}" \
+          --annotation "index,manifest:org.opencontainers.image.revision=${{ github.sha }}" \
+          web1
 
     - name: Build and push web2
-      uses: docker/build-push-action@v6
-      with:
-        context: web2
-        push: true
-        tags: ghcr.io/${{ steps.owner.outputs.value }}/web2:${{ steps.tag.outputs.value }}
-        annotations: ${{ steps.meta.outputs.annotations }}
+      run: |
+        docker buildx build \
+          --push \
+          --platform linux/amd64,linux/arm64 \
+          --tag "ghcr.io/${{ steps.owner.outputs.value }}/web2:${{ steps.tag.outputs.value }}" \
+          --annotation "index,manifest:org.opencontainers.image.source=https://github.com/${{ github.repository }}" \
+          --annotation "index,manifest:org.opencontainers.image.revision=${{ github.sha }}" \
+          web2
 
     - name: Summary
       run: |
