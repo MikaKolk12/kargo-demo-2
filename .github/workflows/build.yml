@@ -3,11 +3,13 @@ name: Build and Push
 on:
   pull_request:
     branches: [main]
-    types: [closed]
+    types: [opened, synchronize, closed]
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
+    if: |
+      (startsWith(github.event.pull_request.head.ref, 'hotfix/') && github.event.action != 'closed') ||
+      (github.event.pull_request.merged == true && !startsWith(github.event.pull_request.head.ref, 'hotfix/'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
