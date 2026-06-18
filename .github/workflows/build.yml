@@ -47,7 +47,7 @@ jobs:
         images: ghcr.io/${{ steps.owner.outputs.value }}/web1
         tags: type=raw,value=${{ steps.tag.outputs.value }}
       env:
-        DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+        DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
 
     - name: Log in to ghcr.io
       uses: docker/login-action@v3
