@@ -51,21 +51,21 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: web1
-        push: true
         tags: ghcr.io/${{ steps.owner.outputs.value }}/web1:${{ steps.tag.outputs.value }}
         annotations: |
           manifest:org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           manifest:org.opencontainers.image.revision=${{ github.sha }}
+        outputs: type=image,push=true,oci-mediatypes=true
 
     - name: Build and push web2
       uses: docker/build-push-action@v5
       with:
         context: web2
-        push: true
         tags: ghcr.io/${{ steps.owner.outputs.value }}/web2:${{ steps.tag.outputs.value }}
         annotations: |
           manifest:org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           manifest:org.opencontainers.image.revision=${{ github.sha }}
+        outputs: type=image,push=true,oci-mediatypes=true
 
     - name: Summary
       run: |
